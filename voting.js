@@ -35,29 +35,60 @@ function handlePollVote(pollOption) {
   }
 }
 
-// Initialize Power-Up
-window.TrelloPowerUp.initialize({
-  'card-badges': function(t, options) {
-    return t.card('id', 'name', 'desc') // Get card information
-      .then(function(card) {
-        var pollOptions = options['poll-options'] || [];
-        var pollOptionElements = pollOptions.map(function(optionText) {
-          return createPollOption(optionText);
-        });
-        return [{
-          icon: '',
-          text: '',
-          items: pollOptionElements
-        }];
-      });
-  },
-  'card-buttons': function(t, options) {
-    return [{
-      text: 'Create Poll',
-      callback: function(t) {
-        // Perform actions for creating a poll, e.g., show a modal, collect poll options, etc.
-        // Once poll options are collected, call t.set('board', 'shared', 'poll-options', pollOptions) to store poll options in the shared board data
-      }
-    }];
+// Handle Create Poll
+function handleCreatePoll(t) {
+    t.popup({
+      title: 'Create Poll',
+      items: [
+        {
+          text: 'Poll Option 1',
+          callback: function(t) {
+            addPollOption(t, 'Poll Option 1');
+          }
+        },
+        {
+          text: 'Poll Option 2',
+          callback: function(t) {
+            addPollOption(t, 'Poll Option 2');
+          }
+        }
+        // Add more options as needed
+      ]
+    });
   }
-});
+  
+  // Add Poll Option
+  function addPollOption(t, optionText) {
+    var pollOptions = t.get('board', 'shared', 'poll-options') || [];
+    pollOptions.push(optionText);
+    t.set('board', 'shared', 'poll-options', pollOptions)
+      .then(function() {
+        t.closePopup();
+      });
+  }
+  
+  // Initialize Power-Up
+  window.TrelloPowerUp.initialize({
+    'card-badges': function(t, options) {
+        return t.card('id', 'name', 'desc').then(function(card) {
+          var pollOptions = options['poll-options'] || [];
+          var pollOptionElements = pollOptions.map(function(optionText) {
+            return createPollOption(optionText);
+          });
+          return [{
+            icon: '',
+            text: '',
+            items: pollOptionElements
+          }];
+        });
+    },
+    'card-buttons': function(t, options) {
+      return [{
+        text: 'Create Poll',
+        callback: function(t) {
+          handleCreatePoll(t);
+        }
+      }];
+    }
+  });
+  
