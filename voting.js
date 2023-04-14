@@ -1,4 +1,4 @@
-// == Trello Power-Up: Voting/Polling ==
+// == Trello Power-Up: Polling/Voting ==
 
 // Constants
 var POLL_OPTION_CLASS = 'poll-option';
@@ -36,7 +36,7 @@ function handlePollVote(pollOption) {
 }
 
 // Initialize Power-Up
-TrelloPowerUp.initialize({
+window.TrelloPowerUp.initialize({
   'card-badges': function(t, options) {
     var pollOptions = options['poll-options'] || [];
     var pollOptionElements = pollOptions.map(function(optionText) {
