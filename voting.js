@@ -9,20 +9,20 @@ var POLL_VOTED_CLASS = 'poll-voted';
 function createPollOption(optionText) {
   var pollOption = document.createElement('div');
   pollOption.className = POLL_OPTION_CLASS;
-  
+
   var pollVote = document.createElement('button');
   pollVote.className = POLL_VOTE_CLASS;
   pollVote.textContent = 'Vote';
   pollVote.addEventListener('click', function() {
     handlePollVote(pollOption);
   });
-  
+
   var pollText = document.createElement('span');
   pollText.textContent = optionText;
-  
+
   pollOption.appendChild(pollVote);
   pollOption.appendChild(pollText);
-  
+
   return pollOption;
 }
 
@@ -38,21 +38,26 @@ function handlePollVote(pollOption) {
 // Initialize Power-Up
 window.TrelloPowerUp.initialize({
   'card-badges': function(t, options) {
-    var pollOptions = options['poll-options'] || [];
-    var pollOptionElements = pollOptions.map(function(optionText) {
-      return createPollOption(optionText);
-    });
-    return Promise.resolve({
-      icon: '',
-      text: '',
-      items: pollOptionElements
-    });
+    return t.card('id', 'name', 'desc') // Get card information
+      .then(function(card) {
+        var pollOptions = options['poll-options'] || [];
+        var pollOptionElements = pollOptions.map(function(optionText) {
+          return createPollOption(optionText);
+        });
+        return [{
+          icon: '',
+          text: '',
+          items: pollOptionElements
+        }];
+      });
   },
-  'card-detail-badges': function(t, options) {
-    var pollOptions = options['poll-options'] || [];
-    var pollOptionElements = pollOptions.map(function(optionText) {
-      return createPollOption(optionText);
-    });
-    return Promise.resolve(pollOptionElements);
+  'card-buttons': function(t, options) {
+    return [{
+      text: 'Create Poll',
+      callback: function(t) {
+        // Perform actions for creating a poll, e.g., show a modal, collect poll options, etc.
+        // Once poll options are collected, call t.set('board', 'shared', 'poll-options', pollOptions) to store poll options in the shared board data
+      }
+    }];
   }
 });
